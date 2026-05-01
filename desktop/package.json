@@ -1,0 +1,120 @@
+{
+  "name": "sparrow-interview-ai",
+  "version": "0.1.0",
+  "description": "SparrowInterviewAI - Think Faster. Answer Smarter.",
+  "main": "electron/main.js",
+  "author": "SparrowInterviewAI",
+  "license": "MIT",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "electron:dev": "concurrently \"ng serve\" \"wait-on http://localhost:4200 && electron .\"",
+    "electron:build": "ng build --configuration production && electron .",
+    "electron:start": "electron .",
+    "dist:win": "ng build --configuration production && electron-builder --win",
+    "dist:mac": "ng build --configuration production && electron-builder --mac",
+    "dist:linux": "ng build --configuration production && electron-builder --linux",
+    "generate:icons": "node scripts/generate-icons.mjs"
+  },
+  "build": {
+    "appId": "com.sparrowinterviewai.desktop",
+    "productName": "SparrowInterviewAI",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/desktop/browser/**/*",
+      "electron/**/*",
+      "!node_modules/**/*"
+    ],
+    "extraMetadata": {
+      "main": "electron/main.js"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "public/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "SparrowInterviewAI"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "category": "public.app-category.productivity",
+      "icon": "public/icon-1024.png",
+      "hardenedRuntime": true,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "category": "Utility",
+      "icon": "public/icon.png"
+    }
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^19.1.0",
+    "@angular/common": "^19.1.0",
+    "@angular/compiler": "^19.1.0",
+    "@angular/core": "^19.1.0",
+    "@angular/forms": "^19.1.0",
+    "@angular/platform-browser": "^19.1.0",
+    "@angular/platform-browser-dynamic": "^19.1.0",
+    "@angular/router": "^19.1.0",
+    "@microsoft/signalr": "^10.0.0",
+    "rxjs": "~7.8.0",
+    "tesseract.js": "^7.0.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^19.1.4",
+    "@angular/cli": "^19.1.4",
+    "@angular/compiler-cli": "^19.1.0",
+    "@tailwindcss/postcss": "^4.2.2",
+    "@types/jasmine": "~5.1.0",
+    "concurrently": "^9.2.1",
+    "electron": "^41.1.0",
+    "electron-builder": "^25.1.8",
+    "jasmine-core": "~5.5.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "png-to-ico": "^3.0.1",
+    "postcss": "^8.5.8",
+    "sharp": "^0.34.5",
+    "tailwindcss": "^4.2.2",
+    "typescript": "~5.7.2",
+    "wait-on": "^9.0.4"
+  }
+}

@@ -1,0 +1,6 @@
+@SparrowInterviewAI.Api_HostAddress = http://localhost:5082
+
+GET {{SparrowInterviewAI.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

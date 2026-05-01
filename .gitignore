@@ -1,0 +1,49 @@
+# .gitignore for SparrowInterviewAI
+# Build outputs
+backend/SparrowInterviewAI.Api/bin/
+backend/SparrowInterviewAI.Api/obj/
+backend/SparrowInterviewAI.Api.Tests/bin/
+backend/SparrowInterviewAI.Api.Tests/obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Node modules
+node_modules/
+
+# Desktop build outputs
+/desktop/build/
+/desktop/release/
+
+# Environment files
+.env
+
+# Database dumps/backups
+*.sql
+*.dump
+
+# Uploads (if not needed in repo)
+backend/SparrowInterviewAI.Api/uploads/
+
+# Misc
+*.tmp
+*.temp
+
+# Ignore Electron packaging outputs
+/desktop/*.asar
+
+# Ignore test coverage
+coverage/

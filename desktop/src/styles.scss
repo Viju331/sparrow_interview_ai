@@ -1,0 +1,151 @@
+@use "tailwindcss";
+
+/* ============================================
+   Sparrow Earth Tech - Design System
+   ============================================ */
+
+@theme {
+  /* Color Palette */
+  --color-sparrow-primary: #8b5e3c;
+  --color-sparrow-secondary: #a47551;
+  --color-sparrow-accent: #22c55e;
+  --color-sparrow-bg: #0f172a;
+  --color-sparrow-surface: #1e293b;
+  --color-sparrow-text: #e2e8f0;
+  --color-sparrow-text-muted: #94a3b8;
+  --color-sparrow-surface-hover: #273548;
+  --color-sparrow-border: #334155;
+  --color-sparrow-danger: #ef4444;
+  --color-sparrow-warning: #f59e0b;
+}
+
+/* Base styles */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: var(--color-sparrow-bg);
+  color: var(--color-sparrow-text);
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-sparrow-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-sparrow-text-muted);
+}
+
+/* Selection */
+::selection {
+  background-color: rgba(139, 94, 60, 0.4);
+  color: var(--color-sparrow-text);
+}
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid var(--color-sparrow-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Transition defaults */
+a, button, input, select, textarea {
+  transition: all 0.2s ease;
+}
+
+/* Utility classes */
+.sparrow-card {
+  background-color: var(--color-sparrow-surface);
+  border: 1px solid var(--color-sparrow-border);
+  border-radius: 14px;
+  padding: 1.25rem;
+}
+
+.sparrow-gradient {
+  background: linear-gradient(135deg, #8b5e3c, #a47551);
+}
+
+.sparrow-btn-primary {
+  background-color: var(--color-sparrow-primary);
+  color: white;
+  padding: 0.625rem 1.25rem;
+  border-radius: 12px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--color-sparrow-secondary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(139, 94, 60, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.sparrow-btn-accent {
+  background-color: var(--color-sparrow-accent);
+  color: #0f172a;
+  padding: 0.625rem 1.25rem;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.sparrow-input {
+  background-color: var(--color-sparrow-surface);
+  border: 1px solid var(--color-sparrow-border);
+  border-radius: 12px;
+  padding: 0.625rem 1rem;
+  color: var(--color-sparrow-text);
+  font-size: 0.875rem;
+  width: 100%;
+  transition: border-color 0.2s ease;
+
+  &::placeholder {
+    color: var(--color-sparrow-text-muted);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-sparrow-primary);
+    box-shadow: 0 0 0 3px rgba(139, 94, 60, 0.15);
+  }
+}
