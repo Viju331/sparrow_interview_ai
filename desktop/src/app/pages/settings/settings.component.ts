@@ -83,34 +83,41 @@ import { AudioCaptureService, AudioDeviceInfo } from '../../shared/services/audi
           <div class="setting-row">
             <div>
               <span class="setting-label">Answer Provider</span>
-              <span class="setting-desc">Choose between the local fallback and the backend OpenAI provider.</span>
+              <span class="setting-desc">AI provider used to generate interview answers. Credentials are set in backend config.</span>
             </div>
             <select class="sparrow-input setting-select" [(ngModel)]="draft.aiProvider">
-              <option value="local">Local Runtime</option>
+              <option value="gemini">Gemini</option>
               <option value="openai">OpenAI</option>
+              <option value="github">GitHub Models</option>
+              <option value="local">Local Fallback</option>
             </select>
           </div>
 
           <div class="setting-row">
             <div>
               <span class="setting-label">Transcription Engine</span>
-              <span class="setting-desc">Use browser speech locally or send microphone chunks to the backend OpenAI transcription path.</span>
+              <span class="setting-desc">How microphone audio is converted to text. Local Whisper and Groq require the services to be running.</span>
             </div>
             <select class="sparrow-input setting-select" [(ngModel)]="draft.transcriptionEngine">
-              <option value="browser-speech">Browser Speech</option>
+              <option value="gemini">Gemini (default)</option>
               <option value="openai-transcribe">OpenAI Transcribe</option>
+              <option value="groq">Groq (whisper-large-v3)</option>
+              <option value="local-whisper">Local Whisper (whisper.cpp / faster-whisper)</option>
             </select>
           </div>
 
           <div class="setting-row">
             <div>
               <span class="setting-label">OCR Provider</span>
-              <span class="setting-desc">Pick local OCR, OpenAI vision OCR, or Azure AI Vision OCR for screen analysis.</span>
+              <span class="setting-desc">How text is extracted from screen captures. PaddleOCR requires the local Python service to be running.</span>
             </div>
             <select class="sparrow-input setting-select" [(ngModel)]="draft.ocrProvider">
-              <option value="local">Local OCR</option>
+              <option value="gemini-vision">Gemini Vision (default)</option>
               <option value="openai-vision">OpenAI Vision</option>
+              <option value="github-vision">GitHub Models Vision</option>
               <option value="azure-vision">Azure AI Vision</option>
+              <option value="paddle-ocr">PaddleOCR (local Python service)</option>
+              <option value="local">Tesseract.js (browser fallback)</option>
             </select>
           </div>
 

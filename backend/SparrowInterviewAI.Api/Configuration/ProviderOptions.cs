@@ -9,6 +9,9 @@ public sealed class ProviderOptions
     public AzureVisionProviderOptions AzureVision { get; set; } = new();
     public GitHubModelsProviderOptions GitHubModels { get; set; } = new();
     public GeminiProviderOptions Gemini { get; set; } = new();
+    public GroqProviderOptions Groq { get; set; } = new();
+    public LocalWhisperProviderOptions LocalWhisper { get; set; } = new();
+    public PaddleOcrProviderOptions PaddleOcr { get; set; } = new();
 }
 
 public sealed class OpenAiProviderOptions
@@ -55,4 +58,40 @@ public sealed class GeminiProviderOptions
     public string VisionModel { get; set; } = "gemini-2.0-flash";
     public string TranscriptionModel { get; set; } = "gemini-2.5-flash";
     public string EmbeddingModel { get; set; } = "text-embedding-004";
+}
+
+/// <summary>
+/// Groq — ultra-fast Whisper transcription via OpenAI-compatible API.
+/// Set ApiKey to a Groq API key from console.groq.com.
+/// </summary>
+public sealed class GroqProviderOptions
+{
+    public string ApiKey { get; set; } = string.Empty;
+    public string BaseUrl { get; set; } = "https://api.groq.com/openai/v1";
+    public string TranscriptionModel { get; set; } = "whisper-large-v3";
+}
+
+/// <summary>
+/// Local Whisper server — supports whisper.cpp (server mode) or faster-whisper-server.
+/// Both expose an OpenAI-compatible /v1/audio/transcriptions endpoint.
+/// No API key required; set IsEnabled to true once the local service is running.
+/// - whisper.cpp:          https://github.com/ggml-org/whisper.cpp (run: ./whisper-server --port 8080)
+/// - faster-whisper-server: pip install faster-whisper-server (run: uvicorn faster_whisper_server.main:app --port 8080)
+/// </summary>
+public sealed class LocalWhisperProviderOptions
+{
+    public bool IsEnabled { get; set; } = false;
+    public string BaseUrl { get; set; } = "http://localhost:8080/v1";
+    public string TranscriptionModel { get; set; } = "Systran/faster-whisper-small.en";
+}
+
+/// <summary>
+/// PaddleOCR microservice — local Python FastAPI service wrapping PaddleOCR.
+/// Run the service from /ocr_service/start.bat (or: uvicorn ocr_service:app --port 8001).
+/// Set IsEnabled to true once the service is running.
+/// </summary>
+public sealed class PaddleOcrProviderOptions
+{
+    public bool IsEnabled { get; set; } = false;
+    public string BaseUrl { get; set; } = "http://localhost:8001";
 }

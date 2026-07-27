@@ -42,6 +42,9 @@ public class ExternalProviderService
         && !string.IsNullOrWhiteSpace(_options.AzureVision.ApiKey);
     public bool SupportsGitHub => !string.IsNullOrWhiteSpace(_options.GitHubModels.Token);
     public bool SupportsGemini => !string.IsNullOrWhiteSpace(_options.Gemini.ApiKey);
+    public bool SupportsGroq => !string.IsNullOrWhiteSpace(_options.Groq.ApiKey);
+    public bool SupportsLocalWhisper => _options.LocalWhisper.IsEnabled && !string.IsNullOrWhiteSpace(_options.LocalWhisper.BaseUrl);
+    public bool SupportsPaddleOcr => _options.PaddleOcr.IsEnabled && !string.IsNullOrWhiteSpace(_options.PaddleOcr.BaseUrl);
 
     // ─── Public text-generation entry points ──────────────────────────────
 
@@ -348,8 +351,24 @@ public class ExternalProviderService
         else if (resolved == "github")
         {
             if (!SupportsGitHub) return (null, "github", _options.GitHubModels.ChatModel);
-            // GitHub Models does not support audio transcription — fall through to local
+            // GitHub Models does not support audio transcription
             return (null, "local", "local");
+        }
+        else if (resolved == "groq")
+        {
+            if (!SupportsGroq) return (null, "groq", _options.Groq.TranscriptionModel);
+            transcriptionUrl = $"{_options.Groq.BaseUrl.TrimEnd('/')}/audio/transcriptions";
+            model = _options.Groq.TranscriptionModel;
+            addHeaders = AddGroqHeaders;
+            providerLabel = "groq";
+        }
+        else if (resolved == "local-whisper" || resolved == "whisper-cpp")
+        {
+            if (!SupportsLocalWhisper) return (null, "local-whisper", _options.LocalWhisper.TranscriptionModel);
+            transcriptionUrl = $"{_options.LocalWhisper.BaseUrl.TrimEnd('/')}/audio/transcriptions";
+            model = _options.LocalWhisper.TranscriptionModel;
+            addHeaders = _ => { }; // local server — no auth header
+            providerLabel = "local-whisper";
         }
         else
         {
@@ -499,6 +518,14 @@ public class ExternalProviderService
                     AddGeminiHeaders, filePath, cancellationToken),
                 "gemini-vision",
                 _options.Gemini.VisionModel);
+        }
+
+        if (resolved == "paddle-ocr" && SupportsPaddleOcr)
+        {
+            return (
+                await ExtractWithPaddleOcrAsync(filePath, language, cancellationToken),
+                "paddle-ocr",
+                "paddleocr");
         }
 
         return (null, "local", "local");
@@ -684,6 +711,49 @@ public class ExternalProviderService
         return lines.Count == 0 ? null : string.Join(Environment.NewLine, lines);
     }
 
+    private async Task<string?> ExtractWithPaddleOcrAsync(string filePath, string? language, CancellationToken cancellationToken)
+    {
+        if (!File.Exists(filePath))
+        {
+            return null;
+        }
+
+        var url = $"{_options.PaddleOcr.BaseUrl.TrimEnd('/')}/ocr";
+
+        await using var fileStream = File.OpenRead(filePath);
+        using var form = new MultipartFormDataContent();
+
+        using var fileContent = new StreamContent(fileStream);
+        fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(GetMimeType(filePath));
+        form.Add(fileContent, "file", Path.GetFileName(filePath));
+
+        if (!string.IsNullOrWhiteSpace(language))
+            form.Add(new StringContent(language), "language");
+
+        using var request = new HttpRequestMessage(HttpMethod.Post, url) { Content = form };
+        using var response = await _httpClientFactory.CreateClient().SendAsync(request, cancellationToken);
+        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            _logger.LogWarning("PaddleOCR failed with {StatusCode}: {Body}", response.StatusCode, body);
+            return null;
+        }
+
+        try
+        {
+            using var json = JsonDocument.Parse(body);
+            return json.RootElement.TryGetProperty("text", out var text)
+                ? text.GetString()?.Trim()
+                : null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to parse PaddleOCR response: {Body}", body);
+            return null;
+        }
+    }
+
     private static string? ParseOpenAiOutputText(JsonElement root)
     {
         if (root.TryGetProperty("output_text", out var outputText) && outputText.ValueKind == JsonValueKind.String)
@@ -748,6 +818,9 @@ public class ExternalProviderService
 
     private void AddGeminiHeaders(HttpRequestMessage request)
         => request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _options.Gemini.ApiKey);
+
+    private void AddGroqHeaders(HttpRequestMessage request)
+        => request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _options.Groq.ApiKey);
 
     // ─── Streaming: public entry point ───────────────────────────────────
 
